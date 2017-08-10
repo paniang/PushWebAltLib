@@ -3,6 +3,8 @@ package nl.martijndwars.webpush;
 import com.google.gson.Gson;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -43,9 +45,11 @@ public class PushTest {
         pushService.setSubject("mailto:admin@domain.com");
 
         // Send notification!
-        HttpResponse httpResponse = pushService.send(notification);
-
-        System.out.println(httpResponse.getStatusLine().getStatusCode());
-        System.out.println(IOUtils.toString(httpResponse.getEntity().getContent(), StandardCharsets.UTF_8));
+        try (final CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.createSystem()) {
+            closeableHttpAsyncClient.start();
+            HttpResponse httpResponse = pushService.send(notification, closeableHttpAsyncClient);
+            System.out.println(httpResponse.getStatusLine().getStatusCode());
+            System.out.println(IOUtils.toString(httpResponse.getEntity().getContent(), StandardCharsets.UTF_8));
+        }
     }
 }

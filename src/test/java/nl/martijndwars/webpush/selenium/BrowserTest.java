@@ -41,7 +41,7 @@ public class BrowserTest implements Executable {
         String message = "Hëllö, world!";
         Notification notification = new Notification(subscription, message);
 
-        HttpResponse response = pushService.send(notification);
+        HttpResponse response = pushService.send(notification, closeableHttpAsyncClient);
         assertEquals(201, response.getStatusLine().getStatusCode());
 
         JsonArray messages = testingService.getNotificationStatus(testSuiteId, testId);

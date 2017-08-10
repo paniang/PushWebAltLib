@@ -3,6 +3,8 @@ package nl.martijndwars.webpush;
 import com.google.gson.JsonObject;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
+import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
@@ -41,10 +43,12 @@ public class PushServiceTest {
         pushService.setPrivateKey(Utils.loadPrivateKey(vapidPrivateKey));
 
         // Send notification!
-        HttpResponse httpResponse = pushService.send(notification);
-
-        System.out.println(httpResponse.getStatusLine().getStatusCode());
-        System.out.println(IOUtils.toString(httpResponse.getEntity().getContent(), StandardCharsets.UTF_8));
+        try (final CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.createSystem()) {
+            closeableHttpAsyncClient.start();
+            HttpResponse httpResponse = pushService.send(notification, closeableHttpAsyncClient);
+            System.out.println(httpResponse.getStatusLine().getStatusCode());
+            System.out.println(IOUtils.toString(httpResponse.getEntity().getContent(), StandardCharsets.UTF_8));
+        }
     }
 
     @Test
@@ -69,10 +73,12 @@ public class PushServiceTest {
         pushService.setPrivateKey(Utils.loadPrivateKey(vapidPrivateKey));
 
         // Send notification!
-        HttpResponse httpResponse = pushService.send(notification);
-
-        System.out.println(httpResponse.getStatusLine().getStatusCode());
-        System.out.println(IOUtils.toString(httpResponse.getEntity().getContent(), StandardCharsets.UTF_8));
+        try (final CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.createSystem()) {
+            closeableHttpAsyncClient.start();
+            HttpResponse httpResponse = pushService.send(notification, closeableHttpAsyncClient);
+            System.out.println(httpResponse.getStatusLine().getStatusCode());
+            System.out.println(IOUtils.toString(httpResponse.getEntity().getContent(), StandardCharsets.UTF_8));
+        }
     }
 
     @Test
@@ -90,10 +96,12 @@ public class PushServiceTest {
         PushService pushService = new PushService();
 
         // Send notification!
-        HttpResponse httpResponse = pushService.send(notification);
-
-        System.out.println(httpResponse.getStatusLine().getStatusCode());
-        System.out.println(IOUtils.toString(httpResponse.getEntity().getContent(), StandardCharsets.UTF_8));
+        try (final CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.createSystem()) {
+            closeableHttpAsyncClient.start();
+            HttpResponse httpResponse = pushService.send(notification, closeableHttpAsyncClient);
+            System.out.println(httpResponse.getStatusLine().getStatusCode());
+            System.out.println(IOUtils.toString(httpResponse.getEntity().getContent(), StandardCharsets.UTF_8));
+        }
     }
 
     @Test
@@ -112,10 +120,12 @@ public class PushServiceTest {
         pushService.setGcmApiKey("AIzaSyDSa2bw0b0UGOmkZRw-dqHGQRI_JqpiHug");
 
         // Send notification!
-        HttpResponse httpResponse = pushService.send(notification);
-
-        System.out.println(httpResponse.getStatusLine().getStatusCode());
-        System.out.println(IOUtils.toString(httpResponse.getEntity().getContent(), StandardCharsets.UTF_8));
+        try (final CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.createSystem()) {
+            closeableHttpAsyncClient.start();
+            HttpResponse httpResponse = pushService.send(notification, closeableHttpAsyncClient);
+            System.out.println(httpResponse.getStatusLine().getStatusCode());
+            System.out.println(IOUtils.toString(httpResponse.getEntity().getContent(), StandardCharsets.UTF_8));
+        }
     }
 
     @Test

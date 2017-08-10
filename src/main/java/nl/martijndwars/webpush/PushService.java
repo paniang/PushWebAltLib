@@ -3,9 +3,9 @@ package nl.martijndwars.webpush;
 import com.google.common.io.BaseEncoding;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
-import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.apache.http.message.BasicHeader;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.interfaces.ECPublicKey;
@@ -99,6 +99,7 @@ public class PushService {
      * Send a notification and wait for the response.
      *
      * @param notification
+     * @param closeableHttpAsyncClient
      * @return
      * @throws GeneralSecurityException
      * @throws IOException
@@ -106,20 +107,21 @@ public class PushService {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    public HttpResponse send(Notification notification) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
-        return sendAsync(notification).get();
+    public HttpResponse send(Notification notification, CloseableHttpAsyncClient closeableHttpAsyncClient) throws GeneralSecurityException, IOException, JoseException, ExecutionException, InterruptedException {
+        return sendAsync(notification, closeableHttpAsyncClient).get();
     }
 
     /**
      * Send a notification, but don't wait for the response.
      *
      * @param notification
+     * @param closeableHttpAsyncClient
      * @return
      * @throws GeneralSecurityException
      * @throws IOException
      * @throws JoseException
      */
-    public Future<HttpResponse> sendAsync(Notification notification) throws GeneralSecurityException, IOException, JoseException {
+    public Future<HttpResponse> sendAsync(Notification notification, CloseableHttpAsyncClient closeableHttpAsyncClient) throws GeneralSecurityException, IOException, JoseException {
         BaseEncoding base64url = BaseEncoding.base64Url();
 
         Encrypted encrypted = encrypt(
@@ -182,10 +184,24 @@ public class PushService {
             httpPost.addHeader(new BasicHeader(entry.getKey(), entry.getValue()));
         }
 
-        final CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.createSystem();
-        closeableHttpAsyncClient.start();
 
-        return closeableHttpAsyncClient.execute(httpPost, new ClosableCallback(closeableHttpAsyncClient));
+
+        return closeableHttpAsyncClient.execute(httpPost, new FutureCallback<HttpResponse>() {
+            @Override
+            public void completed(HttpResponse httpResponse) {
+
+            }
+
+            @Override
+            public void failed(Exception e) {
+
+            }
+
+            @Override
+            public void cancelled() {
+
+            }
+        });
     }
 
     /**
