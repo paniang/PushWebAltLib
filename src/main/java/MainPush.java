@@ -1,7 +1,7 @@
 import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
 import org.apache.http.HttpResponse;
-import org.apache.http.impl.nio.client.CloseableHttpPipeliningClient;
+import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jose4j.lang.JoseException;
@@ -26,7 +26,7 @@ public class MainPush {
         } catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidKeySpecException e) {
             e.printStackTrace();
         }
-        final CloseableHttpPipeliningClient closeableHttpAsyncClient = HttpAsyncClients.createPipelining();
+        final CloseableHttpAsyncClient closeableHttpAsyncClient = HttpAsyncClients.createSystem();
         try {
             closeableHttpAsyncClient.start();
             HttpResponse response = pushService.sendAsync(notification, closeableHttpAsyncClient).get();
